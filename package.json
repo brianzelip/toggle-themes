@@ -1,0 +1,20 @@
+{
+  "name": "toggle-themes",
+  "version": "0.1.0",
+  "description": "Toggle dark/light mode in my editor and terminal.",
+  "main": "toggleThemes.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:brianzelip/toggle-themes.git"
+  },
+  "keywords": [
+    "dark mode",
+    "light mode",
+    "tooling",
+    "Hyper",
+    "VS Code"
+  ],
+  "author": "Brian Zelip <bzelip@protonmail.com> (https://zelip.me/)",
+  "license": "MIT"
+}

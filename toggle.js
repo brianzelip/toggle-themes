@@ -1,19 +1,16 @@
 /**
- * Toggle dark/light themes in my editor and terminal via CLI.
+ * @name toggle.js
+ * @description Toggle dark/light themes in vscode and hyper via CLI.
+ * @argument {String} preference 'light' or 'dark'
  *
- * Usage: `toggle light`, `toggle dark`
- *
- * Editor settings change by updating `workbench.colorTheme` json key.
- *
- * Terminal settings change by uninstalling current theme, then
- * installing preferred theme.
+ * Usage: `node toggle.js light` or `node toggle.js dark`.
  */
-const fs = require('fs');
+const preference = process.argv[2];
+
 const os = require('os');
+const fs = require('fs');
+const { exec } = require('child_process');
 
-const preference = process.argv[2]; // accepts `light` or `dark`
-
-const hyperConfigPath = `${os.homedir()}/.hyper.js`;
 const vscConfigPath = `${os.homedir()}/Library/Application Support/Code/User/settings.json`;
 
 const editor = {
@@ -21,35 +18,61 @@ const editor = {
   json: require(vscConfigPath),
   key: 'workbench.colorTheme',
   dark: 'GitHub Dark Dimmed',
-  light: 'GitHub Light Default',
+  light: 'GitHub Light Default'
 };
 
+const terminal = {
+  dark: 'hyper-github-dark-dimmed',
+  light: 'hyper-github-light'
+};
+
+main();
+
+/**
+ * @name main
+ * @description Update editor and terminal settings.
+ */
+function main() {
+  updateVSC();
+  updateHyper();
+}
+
+/**
+ * @name updateVSC
+ * @description Change editor settings file.
+ */
 function updateVSC() {
   editor.json[editor.key] = editor[preference];
   fs.writeFileSync(editor.path, JSON.stringify(editor.json, null, 2));
 }
 
-const terminal = {
-  path: hyperConfigPath,
-  json: require(hyperConfigPath),
-  dark: 'hyper-github-dark-dimmed',
-  light: 'hyper-github-light',
-};
-
+/**
+ * @name updateHyper
+ * @description Change terminal settings via cli.
+ */
 function updateHyper() {
-  const fileContents = fs.readFileSync(terminal.path, 'utf-8');
-  const modString = 'module.exports = ';
-  const modRE = new RegExp(modString);
-  const modIndex = fileContents.match(modRE).index;
-  const modStringEndIndex = modIndex + modString.length;
-  const fileHeader = fileContents.slice(0, modStringEndIndex);
+  if (preference === 'dark') {
+    uninstall('light');
+    install('dark');
+  } else if (preference === 'light') {
+    uninstall('dark');
+    install('light');
+  }
 
-  terminal.json.plugins = [terminal[preference]];
-
-  const newFileContents = fileHeader + JSON.stringify(terminal.json, null, 2);
-
-  fs.writeFileSync(terminal.path, newFileContents);
+  /**
+   * @name uninstall
+   * @description Uninstall a hyper plugin
+   * @param {String} mode 'light' or 'dark'
+   */
+  function uninstall(mode) {
+    exec(`hyper uninstall ${terminal[mode]}`);
+  }
+  /**
+   * @name install
+   * @description Install a hyper plugin
+   * @param {String} mode 'light' or 'dark'
+   */
+  function install(mode) {
+    exec(`hyper install ${terminal[mode]}`);
+  }
 }
-
-updateVSC();
-updateHyper();

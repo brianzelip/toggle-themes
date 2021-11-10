@@ -1,78 +1,83 @@
 /**
- * @name toggle.js
- * @description Toggle dark/light themes in vscode and hyper via CLI.
- * @argument {String} preference 'light' or 'dark'
+ * toggle.js
  *
- * Usage: `node toggle.js light` or `node toggle.js dark`.
+ * Toggle dark/light themes in VS Code and Hyper via CLI.
+ *
+ * Usage: `node toggle.js dark` or `node toggle.js light`
+ * @argument {String} preference 'dark' or 'light'
+ * @author Brian Zelip
+ * @license GPLv3
  */
 const preference = process.argv[2];
 
-const os = require('os');
-const fs = require('fs');
+const validArgs = ['dark', 'light'];
+
+if (!validArgs.includes(preference)) throw 'Invalid argument passed.';
+
+const opposite = preference === validArgs[0] ? validArgs[1] : validArgs[0];
+
+const { homedir } = require('os');
+const { writeFileSync } = require('fs');
 const { exec } = require('child_process');
 
-const vscConfigPath = `${os.homedir()}/Library/Application Support/Code/User/settings.json`;
+const codeConfigPath = `${homedir()}/Library/Application Support/Code/User/settings.json`;
 
-const editor = {
-  path: vscConfigPath,
-  json: require(vscConfigPath),
+const code = {
+  path: codeConfigPath,
+  json: require(codeConfigPath),
   key: 'workbench.colorTheme',
   dark: 'GitHub Dark Dimmed',
   light: 'GitHub Light Default'
 };
 
-const terminal = {
+const hyper = {
   dark: 'hyper-github-dark-dimmed',
   light: 'hyper-github-light'
 };
 
-main();
+toggle();
 
 /**
- * @name main
- * @description Update editor and terminal settings.
+ * @name toggle
+ * @description Update VS Code and Hyper settings.
  */
-function main() {
-  updateVSC();
+function toggle() {
+  updateCode();
   updateHyper();
 }
 
 /**
- * @name updateVSC
- * @description Change editor settings file.
+ * @name updateCode
+ * @description Change VS Code settings file.
  */
-function updateVSC() {
-  editor.json[editor.key] = editor[preference];
-  fs.writeFileSync(editor.path, JSON.stringify(editor.json, null, 2));
+function updateCode() {
+  code.json[code.key] = code[preference];
+  writeFileSync(code.path, JSON.stringify(code.json, null, 2));
 }
 
 /**
  * @name updateHyper
- * @description Change terminal settings via cli.
+ * @description Change Hyper plugins via cli.
  */
 function updateHyper() {
-  if (preference === 'dark') {
-    uninstall('light');
-    install('dark');
-  } else if (preference === 'light') {
-    uninstall('dark');
-    install('light');
-  }
+  uninstall(opposite);
+  install(preference);
 
   /**
    * @name uninstall
-   * @description Uninstall a hyper plugin
-   * @param {String} mode 'light' or 'dark'
+   * @description Uninstall a Hyper plugin
+   * @param {String} mode 'dark' or 'light'
    */
   function uninstall(mode) {
-    exec(`hyper uninstall ${terminal[mode]}`);
+    exec(`hyper uninstall ${hyper[mode]}`);
   }
+
   /**
    * @name install
-   * @description Install a hyper plugin
-   * @param {String} mode 'light' or 'dark'
+   * @description Install a Hyper plugin
+   * @param {String} mode 'dark' or 'light'
    */
   function install(mode) {
-    exec(`hyper install ${terminal[mode]}`);
+    exec(`hyper install ${hyper[mode]}`);
   }
 }

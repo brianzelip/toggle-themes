@@ -1,9 +1,9 @@
 /**
- * toggle.js
+ * toggleThemes.js
  *
  * Toggle dark/light themes in VS Code and Hyper via CLI.
  *
- * Usage: `node toggle.js dark` or `node toggle.js light`
+ * Usage: `node toggleThemes.js dark` or `node toggleThemes.js light`
  * @argument {String} preference 'dark' or 'light'
  * @author Brian Zelip
  * @license GPLv3
@@ -35,13 +35,13 @@ const hyper = {
   light: 'hyper-github-light'
 };
 
-toggle();
+toggleThemes();
 
 /**
- * @name toggle
+ * @name toggleThemes
  * @description Update VS Code and Hyper settings.
  */
-function toggle() {
+function toggleThemes() {
   updateCode();
   updateHyper();
 }

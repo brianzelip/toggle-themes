@@ -48,7 +48,7 @@ function toggleThemes() {
 
 /**
  * @name updateCode
- * @description Change VS Code settings file.
+ * @description Write over VS Code settings file.
  */
 function updateCode() {
   code.json[code.key] = code[preference];
@@ -57,27 +57,11 @@ function updateCode() {
 
 /**
  * @name updateHyper
- * @description Change Hyper plugins via cli.
+ * @description Change Hyper plugins via its cli. Uninstalls old plugin
+ * to avoid Hyper style bugs with multiple themes installed, installs
+ * new plugin.
  */
 function updateHyper() {
-  uninstall(opposite);
-  install(preference);
-
-  /**
-   * @name uninstall
-   * @description Uninstall a Hyper plugin
-   * @param {String} mode 'dark' or 'light'
-   */
-  function uninstall(mode) {
-    exec(`hyper uninstall ${hyper[mode]}`);
-  }
-
-  /**
-   * @name install
-   * @description Install a Hyper plugin
-   * @param {String} mode 'dark' or 'light'
-   */
-  function install(mode) {
-    exec(`hyper install ${hyper[mode]}`);
-  }
+  exec(`hyper uninstall ${hyper[opposite]}`);
+  exec(`hyper install ${hyper[preference]}`);
 }

@@ -1,9 +1,8 @@
 {
   "name": "toggle-themes",
-  "version": "0.1.0",
-  "description": "Toggle dark/light mode in my editor and terminal.",
+  "version": "1.0.0",
+  "description": "Automate toggling between dark and light themes in VS Code and Hyper.",
   "main": "toggleThemes.js",
-  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:brianzelip/toggle-themes.git"
@@ -11,10 +10,11 @@
   "keywords": [
     "dark mode",
     "light mode",
+    "automation",
     "tooling",
     "Hyper",
     "VS Code"
   ],
   "author": "Brian Zelip <bzelip@protonmail.com> (https://zelip.me/)",
-  "license": "MIT"
+  "license": "GPLv3"
 }
